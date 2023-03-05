@@ -1,9 +1,7 @@
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -38,23 +36,16 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] args) {
 
-        List<Integer> list = new ArrayList<>();
-
-        fill(list, 20);
+        List<Integer> list = fill(20);
         findEven(list);
 
         Stream<Integer> stream = list.stream();
-        findMinMax(stream, Integer::compareTo, (x, y) -> System.out.println("min " + x + " max: " + y));
-
+        findMinMax(stream, Integer::compareTo, (x, y) -> System.out.println("min: " + x + " max: " + y));
     }
 
-    public static void fill(List<Integer> list, int size) {
-        int num = 0;
+    public static List<Integer> fill(int size) {
         Random random = new Random();
-        while (num <= size) {
-            list.add(random.nextInt(100));
-            num++;
-        }
+        return Stream.generate(() -> random.nextInt(100)).limit(size).toList();
     }
 
     public static <A> void findMinMax(
@@ -62,7 +53,7 @@ public class Main {
             Comparator<? super A> order,
             BiConsumer<? super A, ? super A> minMaxConsumer) {
 
-        List<A> list = stream.sorted(order).collect(Collectors.toList());
+        List<? extends A> list = stream.sorted(order).toList();
 
         if (list.isEmpty()) {
             minMaxConsumer.accept(null, null);
